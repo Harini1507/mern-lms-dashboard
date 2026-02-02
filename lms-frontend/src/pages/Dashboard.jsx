@@ -1,40 +1,43 @@
 import { useEffect, useState } from "react";
-import { getDashboardStats } from "../services/dashboardService";
+import axios from "axios";
 
 export default function Dashboard() {
-  const [stats, setStats] = useState(null);
+  const [data, setData] = useState(null);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const loadStats = async () => {
-      const data = await getDashboardStats();
-      setStats(data);
+    const fetchDashboard = async () => {
+      try {
+        const token = localStorage.getItem("token");
+
+        const res = await axios.get("http://localhost:8000/dashboard", {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+
+        setData(res.data);
+        setLoading(false);
+      } catch (err) {
+        console.error("Dashboard error:", err);
+        setLoading(false);
+      }
     };
 
-    loadStats();
+    fetchDashboard();
   }, []);
 
-  if (!stats) return <p style={{ padding: "20px" }}>Loading...</p>;
+  if (loading) return <h2>Loading...</h2>;
+
+  if (!data) return <h2>No data</h2>;
 
   return (
-    <div className="page">
-      <h2>Dashboard</h2>
-
-      <div
-        style={{
-          display: "grid",
-          gridTemplateColumns: "repeat(2, 1fr)",
-          gap: "20px",
-        }}
-      >
-        <div className="list-item">📘 Total Courses: {stats.totalCourses}</div>
-        <div className="list-item">📚 Total Lessons: {stats.totalLessons}</div>
-        <div className="list-item">
-          ✅ Completed Lessons: {stats.completedLessons}
-        </div>
-        <div className="list-item">
-          👨‍🎓 Active Students: {stats.activeStudents}
-        </div>
-      </div>
+    <div>
+      <h1>Dashboard</h1>
+      <p>Total Courses: {data.totalCourses}</p>
+      <p>Total Lessons: {data.totalLessons}</p>
+      <p>Completed Lessons: {data.completedLessons}</p>
+      <p>Active Students: {data.activeStudents}</p>
     </div>
   );
 }

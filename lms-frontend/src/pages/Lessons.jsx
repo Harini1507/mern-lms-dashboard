@@ -8,12 +8,14 @@ import {
 export default function Lessons() {
   const [lessons, setLessons] = useState([]);
   const [title, setTitle] = useState("");
+  const role = localStorage.getItem("role"); // role check
 
   useEffect(() => {
     const loadLessons = async () => {
       const data = await getLessons();
       setLessons(data);
     };
+
     loadLessons();
   }, []);
 
@@ -23,8 +25,9 @@ export default function Lessons() {
     await addLesson({
       title,
       status: "pending",
-      courseId: "66975b934778366abbaf0948f",
     });
+
+    setTitle("");
 
     const data = await getLessons();
     setLessons(data);
@@ -40,15 +43,18 @@ export default function Lessons() {
     <div className="page">
       <h2>🧠 Lessons</h2>
 
-      <div style={{ marginBottom: "20px", display: "flex", gap: "10px" }}>
-        <input
-          type="text"
-          placeholder="Lesson title"
-          value={title}
-          onChange={(e) => setTitle(e.target.value)}
-        />
-        <button onClick={handleAddLesson}>Add Lesson</button>
-      </div>
+      {/* ✅ ADMIN ONLY */}
+      {role === "admin" && (
+        <div style={{ marginBottom: "20px", display: "flex", gap: "10px" }}>
+          <input
+            type="text"
+            placeholder="Lesson title"
+            value={title}
+            onChange={(e) => setTitle(e.target.value)}
+          />
+          <button onClick={handleAddLesson}>Add Lesson</button>
+        </div>
+      )}
 
       <div style={{ maxWidth: "600px" }}>
         {lessons.map((l) => (
@@ -63,10 +69,8 @@ export default function Lessons() {
               marginBottom: "12px",
             }}
           >
-            {/* Title */}
             <span style={{ fontWeight: "500" }}>{l.title}</span>
 
-            {/* Status badge */}
             <span
               style={{
                 padding: "4px 12px",
@@ -79,7 +83,6 @@ export default function Lessons() {
               {l.status}
             </span>
 
-            {/* Action */}
             {l.status !== "completed" && (
               <button
                 style={{ marginLeft: "auto" }}

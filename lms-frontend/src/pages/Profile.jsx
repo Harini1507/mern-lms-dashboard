@@ -25,7 +25,19 @@ export default function Profile() {
             <b>Role:</b> {user.role}
           </p>
 
-          <button onClick={() => setEditing(true)}>Edit Profile</button>
+          {/* Buttons with spacing */}
+          <div style={{ display: "flex", gap: "12px", marginTop: "12px" }}>
+            <button onClick={() => setEditing(true)}>Edit Profile</button>
+
+            <button
+              onClick={() => {
+                localStorage.removeItem("token");
+                window.location.href = "/login";
+              }}
+            >
+              Logout
+            </button>
+          </div>
         </>
       ) : (
         <>
@@ -38,7 +50,9 @@ export default function Profile() {
             onChange={(e) => setUser({ ...user, email: e.target.value })}
           />
 
-          <button onClick={() => setEditing(false)}>Save</button>
+          <div style={{ marginTop: "12px" }}>
+            <button onClick={() => setEditing(false)}>Save</button>
+          </div>
         </>
       )}
     </div>

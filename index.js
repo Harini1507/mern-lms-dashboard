@@ -1,6 +1,8 @@
 const courseRoutes = require("./routes/courseRoutes");
 const lessonRoutes = require("./routes/lessonRoutes");
 const dashboardRoutes = require("./routes/dashboardRoutes");
+const authRoutes = require("./routes/authRoutes");
+
 require("dotenv").config();
 
 const express = require("express");
@@ -12,6 +14,7 @@ const app = express();
 // middleware
 app.use(cors());
 app.use(express.json());
+app.use("/auth", authRoutes);
 
 // connect database
 connectDB();

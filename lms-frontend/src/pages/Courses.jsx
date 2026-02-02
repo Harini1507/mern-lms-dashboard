@@ -7,16 +7,13 @@ export default function Courses() {
   const [description, setDescription] = useState("");
   const [duration, setDuration] = useState("");
 
-  const loadCourses = async () => {
-    const data = await getCourses();
-    setCourses(data);
-  };
+  const role = localStorage.getItem("role");
 
   useEffect(() => {
-    async function loadCourses() {
+    const loadCourses = async () => {
       const data = await getCourses();
       setCourses(data);
-    }
+    };
 
     loadCourses();
   }, []);
@@ -30,34 +27,39 @@ export default function Courses() {
     setDescription("");
     setDuration("");
 
-    loadCourses();
+    // reload courses after adding
+    const data = await getCourses();
+    setCourses(data);
   };
 
   return (
     <div className="page">
       <h2>📘 Courses</h2>
 
-      <div style={{ marginBottom: "20px" }}>
-        <input
-          placeholder="Course title"
-          value={title}
-          onChange={(e) => setTitle(e.target.value)}
-        />
-        <input
-          placeholder="Description"
-          value={description}
-          onChange={(e) => setDescription(e.target.value)}
-        />
-        <input
-          placeholder="Duration (e.g. 4 weeks)"
-          value={duration}
-          onChange={(e) => setDuration(e.target.value)}
-        />
-        <button onClick={handleAddCourse}>Add Course</button>
-      </div>
+      {/* ADMIN ONLY */}
+      {role === "admin" && (
+        <div style={{ marginBottom: "20px" }}>
+          <input
+            placeholder="Course title"
+            value={title}
+            onChange={(e) => setTitle(e.target.value)}
+          />
+          <input
+            placeholder="Description"
+            value={description}
+            onChange={(e) => setDescription(e.target.value)}
+          />
+          <input
+            placeholder="Duration (e.g. 4 weeks)"
+            value={duration}
+            onChange={(e) => setDuration(e.target.value)}
+          />
+          <button onClick={handleAddCourse}>Add Course</button>
+        </div>
+      )}
 
       {courses.map((c) => (
-        <div className="list-item" style={{ marginBottom: "16px" }}>
+        <div key={c._id} className="list-item" style={{ marginBottom: "16px" }}>
           <strong>{c.title}</strong>
           <div>{c.description}</div>
           <small>⏱ {c.duration}</small>
